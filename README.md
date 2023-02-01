@@ -8,4 +8,16 @@ It is based on COVID19-API
 ** It is necessary to minimize the number of hits from the source site during daily use of the application.
 * Technologies: Java 17+, Spring boot/Micronaut
 
+# Technologies
+* Spring boot 3.0.1
+* Java 17
+* Lombok
+* H2 + Liquibase
+* OpenAPI
+* Unit Tests (JUnit, Mockito)
+
+## Approaches
+* SOLID
+* Clean code
+
 #### Telegram: @abn_java

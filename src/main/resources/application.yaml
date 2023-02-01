@@ -1,0 +1,15 @@
+#
+#
+#
+server:
+  port: ${API_PORT_PORT:8989}
+
+debug: true
+
+spring:
+  main:
+    banner-mode: off
+  datasource:
+
+  liquibase:
+    change-log: classpath:/liquibase/changelog.xml

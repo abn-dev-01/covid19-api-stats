@@ -16,7 +16,7 @@ It is based on COVID19-API
 * OpenAPI
 * Unit Tests (JUnit, Mockito)
 
-## Approaches
+## Principles
 * SOLID
 * Clean code
 

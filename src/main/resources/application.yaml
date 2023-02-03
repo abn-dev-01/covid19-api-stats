@@ -13,3 +13,9 @@ spring:
 
   liquibase:
     change-log: classpath:/liquibase/changelog.xml
+
+app:
+  url:
+    api:
+      v1:
+        statistics: /api/v1/statistics

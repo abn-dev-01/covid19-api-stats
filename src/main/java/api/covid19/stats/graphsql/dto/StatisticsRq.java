@@ -1,4 +1,4 @@
-package api.covid19.stats.rest.dto;
+package api.covid19.stats.graphsql.dto;
 
 
 import java.util.List;

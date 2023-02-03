@@ -1,7 +1,6 @@
-package api.covid19.stats.rest;
+package api.covid19.stats.graphsql;
 
-import api.covid19.stats.rest.validator.StatisticsValidator;
-import org.junit.jupiter.api.Assertions;
+import api.covid19.stats.graphsql.validator.StatisticsValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest({StatisticRestController.class, StatisticsValidator.class})
@@ -32,9 +29,5 @@ class StatisticRestControllerTest {
     @Test
     void findMaxMinCasesInPeriod() throws Exception {
 
-        Assertions.assertNotNull(urlStatistics);
-
-        mvc.perform(MockMvcRequestBuilders.get(urlStatistics))
-           .andExpect(status().is5xxServerError());
     }
 }

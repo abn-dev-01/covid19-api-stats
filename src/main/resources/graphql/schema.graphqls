@@ -1,0 +1,7 @@
+type Query {
+    statisticsByCountryAndPeriod( dateFrom: String, dateTo: String ): StatisticsRs
+}
+
+type StatisticsRs {
+    some: String
+}

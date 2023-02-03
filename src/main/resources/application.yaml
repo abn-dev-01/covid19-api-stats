@@ -4,16 +4,23 @@
 server:
   port: ${API_PORT_PORT:8989}
 
+# DEBUG
 debug: true
 
+# SPRING OPTIONS
 spring:
   main:
     banner-mode: off
-  datasource:
+  graphql:
+    graphiql:
+      path: /gql
+      enabled: true
 
+  datasource:
   liquibase:
     change-log: classpath:/liquibase/changelog.xml
 
+# APP Configurations
 app:
   url:
     api:

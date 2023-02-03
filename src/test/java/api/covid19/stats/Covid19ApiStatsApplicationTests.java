@@ -1,6 +1,6 @@
 package api.covid19.stats;
 
-import api.covid19.stats.rest.StatisticRestController;
+import api.covid19.stats.graphsql.StatisticsController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 class Covid19ApiStatsApplicationTests {
 
     @Autowired
-    private StatisticRestController statisticRestController;
+    private StatisticsController statisticsController;
 
     @Test
     void contextLoads() {
-        Assertions.assertNotNull(statisticRestController);
+        Assertions.assertNotNull(statisticsController);
     }
 }

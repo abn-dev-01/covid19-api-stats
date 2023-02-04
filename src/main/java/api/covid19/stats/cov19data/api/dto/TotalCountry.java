@@ -5,22 +5,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TotalCountry {
-    private String cityCode;
-    private int recovered;
-    private String comment;
-    private String lon;
-    private String city;
-    private String province;
-    private String date;
-    private int active;
     private String country;
-    private int deaths;
-    private int confirmed;
     private String countryCode;
+    private String province;
+    private String city;
+    private String cityCode;
     private String lat;
+    private String lon;
+    private int confirmed;
+    private int deaths;
+    private int recovered;
+    private int active;
+    private String date;
+    private String comment;
 }

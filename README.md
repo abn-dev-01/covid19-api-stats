@@ -39,7 +39,15 @@ Example GraphQL query:
         }
     }
 
+---
+## Database
 
+### H2 
+You can explore created automatically H2 database in a console: http://localhost:8989/h2-console
+    
+    JDBC URL: jdbc:h2:file:./db.h2
+    Username: sa
+    Password: sa
 
 
 ---

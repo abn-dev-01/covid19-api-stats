@@ -27,6 +27,12 @@
             <AppenderRef ref="LogToConsole"/>
             <AppenderRef ref="LogToRollingRandomAccessFile"/>
         </Logger>
+
+        <!--// LIQUIBASE //-->
+        <Logger name="org.liquibase" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
         <Root level="error">
             <AppenderRef ref="LogToRollingRandomAccessFile"/>
             <AppenderRef ref="LogToConsole"/>

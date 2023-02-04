@@ -4,9 +4,6 @@
 server:
   port: ${API_PORT_PORT:8989}
 
-# DEBUG
-debug: true
-
 # SPRING OPTIONS
 spring:
   main:
@@ -22,7 +19,12 @@ spring:
     username: sa
     password: sa
   liquibase:
-    change-log: classpath:/liquibase/changelog.xml
+    enabled: true
+    change-log: "classpath:liquibase/changelog.xml"
+    default-schema: public
+    contexts: dev
+    user: sa
+    password: sa
   h2:
     console:
       enabled: true
@@ -36,8 +38,8 @@ app:
     src:
       base_url: https://api.covid19api.com
       max_min_statistics: /total/country/%s
-#      max_min_statistics: /premium/country/%s
+      #      max_min_statistics: /premium/country/%s
       username: corona
       auth: ZUav4vawzCfMcMXHV8B
-#      x-access-token: 5cf9dfd5-3449-485e-b5ae-70a60e997864
+      #      x-access-token: 5cf9dfd5-3449-485e-b5ae-70a60e997864
       x-access-token: c1247632-b1d8-4654-8919-40c1f2709b32

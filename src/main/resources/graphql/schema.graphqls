@@ -1,7 +1,10 @@
 type Query {
-    statisticsByCountryAndPeriod( dateFrom: String, dateTo: String ): StatisticsRs
+    statisticsByCountryAndPeriod( countries: [String], dateFrom: String, dateTo: String ): StatisticsRs
 }
 
 type StatisticsRs {
-    some: String
+    maxCases: Int
+    maxCasesDate: [String]
+    minCases: Int
+    minCasesDate: [String]
 }

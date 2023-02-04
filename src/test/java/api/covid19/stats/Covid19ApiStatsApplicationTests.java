@@ -1,6 +1,6 @@
 package api.covid19.stats;
 
-import api.covid19.stats.graphsql.StatisticsController;
+import api.covid19.stats.graphql.StatisticsController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

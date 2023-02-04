@@ -20,4 +20,27 @@ It is based on COVID19-API
 * SOLID
 * Clean code
 
+### GraphQL 
+
+Run APP with default settings.
+Open http://localhost:8989/gql 
+
+Example GraphQL query:
+
+    query {
+    statisticsByCountryAndPeriod(
+        countries: ["uk","us","ch"],
+        dateFrom:"2019-12-01T00:00:00",
+        dateTo: "2021-12-01T00:00:00" ) {
+            maxCases
+            maxCasesDate
+            minCases
+            minCasesDate
+        }
+    }
+
+
+
+
+---
 #### Telegram: @abn_java

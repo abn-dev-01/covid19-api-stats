@@ -17,15 +17,9 @@ spring:
       enabled: true
 
   datasource:
-    url: jdbc:h2:file:./db.h2
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: sa
   liquibase:
     change-log: classpath:/liquibase/changelog.xml
-  h2:
-    console:
-      enabled: true
+
 # APP Configurations
 app:
   url:
@@ -34,10 +28,11 @@ app:
         statistics: /api/v1/statistics
     # url of resources
     src:
-      base_url: https://api.covid19api.com
-      max_min_statistics: /total/country/%s
-#      max_min_statistics: /premium/country/%s
+      base_url: BASE_URL
+      max_min_statistics: PREMIUM_PATH
       username: corona
       auth: ZUav4vawzCfMcMXHV8B
-#      x-access-token: 5cf9dfd5-3449-485e-b5ae-70a60e997864
-      x-access-token: c1247632-b1d8-4654-8919-40c1f2709b32
+  ssl:
+    keystore:
+      path: classpath:ssl/keystore.jks
+      auth: changeit

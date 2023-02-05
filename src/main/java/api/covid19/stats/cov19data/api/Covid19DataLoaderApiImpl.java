@@ -1,5 +1,6 @@
 package api.covid19.stats.cov19data.api;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
         final var ldt = LocalDateTime.parse(dateTo);
 
         // Read COVID19 DATA from Repository
-        statisticsRepository.findMaxMinNewCasesByCountries(countries, ldf.toLocalDate(), ldt.toLocalDate());
+        prepareAllCountriesStatistics(countries, ldf.toLocalDate(), ldt.toLocalDate());
 
         LOG.info(" > Starting request to COVID19 API >");
         var apiResult = loadTotalCountry(url, entityHeaders);
@@ -74,6 +75,18 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
 
         LOG.debug(CommonConstant.END_DEBUG, () -> msg);
         return response;
+    }
+
+    protected void prepareAllCountriesStatistics(
+        List<String> countries,
+        LocalDate localDateFrom,
+        LocalDate localDateTo
+    ) {
+        countries.stream()
+                 .forEach(countryCode -> {
+                     // FIXME if we can then will run it in concurrent
+                     statisticsRepository.findMaxMinNewCasesByCountry(countryCode, localDateFrom, localDateTo);
+                 });
     }
 
     private TotalCountry loadTotalCountry(String url, HttpEntity<HttpHeaders> entityHeaders) {

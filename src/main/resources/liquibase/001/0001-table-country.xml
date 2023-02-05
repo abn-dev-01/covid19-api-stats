@@ -27,7 +27,7 @@
             (
                 id              INT         NOT NULL PRIMARY KEY,
                 country         VARCHAR(50) NOT NULL,
-                country_code    VARCHAR(50) NOT NULL,
+                country_code    CHAR(2) NOT NULL,
                 province        VARCHAR(50) NOT NULL,
                 city            VARCHAR(128) NOT NULL,
                 city_code       VARCHAR(16) NOT NULL,
@@ -37,9 +37,12 @@
                 deaths          INT NOT NULL,
                 recovered       INT NOT NULL,
                 active          INT NOT NULL,
-                date            DATE NOT NULL,
+                date_stat       DATE NOT NULL,
                 comment         VARCHAR(128)
-            )
+            );
+            CREATE INDEX IDX_COUNTRY_CODE ON total_countries(country_code);
+            CREATE INDEX IDX_COUNTRY ON total_countries(country);
+            CREATE INDEX IDX_DATE_STAT ON total_countries(date_stat);
             ]]>
         </sql>
     </changeSet>

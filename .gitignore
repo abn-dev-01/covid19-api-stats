@@ -42,3 +42,6 @@ out/
 
 ### MAVEN ###
 target/
+
+/db.h2.mv.db
+/db.h2.trace.db

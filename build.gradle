@@ -1,7 +1,6 @@
 //
 buildscript {
     ext {
-//        set("jfrogArtifactoryVersion", "4+")
         set("lombokIdVersion", '6.6.1')
         set("shadowIdVersion", '7.1.0')
     }
@@ -12,8 +11,8 @@ buildscript {
     }
     dependencies {
 //        classpath 'org.jooq:jooq-codegen:3.17.7'
-        classpath 'com.h2database:h2:2.1.214'
-        classpath 'org.jooq:jooq-meta-extensions-liquibase:3.17.7'
+        classpath 'com.h2database:h2:2.0.206'
+        classpath 'org.flywaydb:flyway-core:9.8.1'
     }
 //    configurations['classpath'].resolutionStrategy.eachDependency {
 //        if (requested.group == 'org.jooq') {
@@ -32,6 +31,8 @@ plugins {
     id 'io.freefair.lombok' version "${lombokIdVersion}"
     id 'jacoco'
     id 'nu.studer.jooq' version '8.1'
+//    id 'org.flywaydb.flyway' version '9.8.1'
+    id 'org.flywaydb.flyway' version '9.14.1'
 }
 
 java {
@@ -46,6 +47,7 @@ configurations {
     all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
+    flywayMigration
 }
 
 repositories {
@@ -60,6 +62,7 @@ idea {
     }
 }
 
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
@@ -69,22 +72,37 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
     //
-    implementation 'org.liquibase:liquibase-core'
+    // DB
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.flywaydb:flyway-core:9.8.1'
+    //
     // JOOQ
+    flywayMigration 'com.h2database:h2:2.0.206'
+    jooqGenerator 'com.h2database:h2:2.0.206'
+    //
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
-    jooqGenerator 'com.h2database:h2:2.1.214'
     implementation 'org.jooq:jooq:3.17.7'
     implementation 'org.jooq:jooq-codegen:3.17.7'
-    implementation 'org.jooq:jooq-meta-extensions-liquibase:3.17.7'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'
     testImplementation 'org.springframework.graphql:spring-graphql-test'
 }
+
+//flywayMigrate.dependsOn classes
+
+flyway {
+//    configurations = ['flywayMigration']
+    url = 'jdbc:h2:tcp://localhost/D:\\FL\\t\\Covid19-API\\db.tcp-v2.0.206'
+    user = 'sa'
+    password = 'sa'
+    locations = ['classpath:db/migration']
+    schemas = ['PUBLIC_SCHEMA']
+}
+
 
 checkstyle {
     configFile = project(':').file("checkstyle.xml")
@@ -106,58 +124,108 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-jooq {
-    version = '3.17.6'
-//    edition = JooqEdition.OSS
+// Now we can run the jOOQ task when compiling Java code, or manually by this command: ./gradlew :jooq:generateJooq.
 
+
+jooq {
     configurations {
         main {
             generationTool {
                 logging = org.jooq.meta.jaxb.Logging.WARN
                 jdbc {
                     driver = 'org.h2.Driver'
-                    url = 'jdbc:h2:file:./db.h2'
-//                    url = 'jdbc:h2:file:./;AUTO_SERVER=TRUE'
-                    user = 'sa'
-                    password = 'sa'
-                    properties {
-                        property {
-                            key = 'PAGE_SIZE'
-                            value = 2048
-                        }
-                    }
+                    url = flyway.url
+                    user = flyway.user
+                    password = flyway.password
                 }
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
                         name = 'org.jooq.meta.h2.H2Database'
-                        forcedTypes {
-                            forcedType {
-                                name = 'varchar'
-                                includeExpression = '.*'
-                                includeTypes = 'JSONB?'
-                            }
-                            forcedType {
-                                name = 'varchar'
-                                includeExpression = '.*'
-                                includeTypes = 'INET'
-                            }
-                        }
-                    }
-                    generate {
-                        deprecated = false
-                        records = false
-                        immutablePojos = false
-                        fluentSetters = false
+                        includes = '.*'
+                        excludes = ''
                     }
                     target {
                         packageName = 'api.covid19.stats'
-//                        directory = 'src/generated/jooq'
-                        directory = 'build/generated/jooq/java'
+                        directory = 'build/generated/sources/jooq/java'
                     }
-                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                 }
             }
         }
     }
 }
+
+// configure jOOQ task such that it only executes when something has changed that potentially affects the generated
+// JOOQ sources
+// - the jOOQ configuration has changed (Jdbc, Generator, Strategy, etc.)
+// - the classpath used to execute the jOOQ generation tool has changed (jOOQ library, database driver, strategy
+// classes, etc.)
+// - the schema files from which the schema is generated and which is used by jOOQ to generate the sources have
+// changed (scripts added, modified, etc.)
+
+tasks.named('generateJooq').configure {
+    // ensure database schema has been prepared by Flyway before generating the jOOQ sources
+    dependsOn tasks.named('flywayMigrate')
+
+    // declare Flyway migration scripts as inputs on the jOOQ task
+    inputs.files(fileTree('src/main/resources/db/migration'))
+            .withPropertyName('migrations')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    // make jOOQ task participate in incremental builds (and build caching)
+    allInputsDeclared = true
+}
+
+//jooq {
+//    version = '3.17.6'
+//    configurations {
+//        main {
+//            generationTool {
+//                logging = org.jooq.meta.jaxb.Logging.WARN
+//                jdbc {
+//                    driver = 'org.h2.Driver'
+//                    url = 'jdbc:h2:file:./db.h2'
+////                    url = 'jdbc:h2:file:./;AUTO_SERVER=TRUE'
+//                    user = 'sa'
+//                    password = 'sa'
+//                    properties {
+//                        property {
+//                            key = 'PAGE_SIZE'
+//                            value = 2048
+//                        }
+//                    }
+//                }
+//                generator {
+//                    name = 'org.jooq.codegen.DefaultGenerator'
+//                    database {
+//                        name = 'org.jooq.meta.h2.H2Database'
+//                        forcedTypes {
+//                            forcedType {
+//                                name = 'varchar'
+//                                includeExpression = '.*'
+//                                includeTypes = 'JSONB?'
+//                            }
+//                            forcedType {
+//                                name = 'varchar'
+//                                includeExpression = '.*'
+//                                includeTypes = 'INET'
+//                            }
+//                        }
+//                    }
+//                    generate {
+//                        deprecated = false
+//                        records = false
+//                        immutablePojos = false
+//                        fluentSetters = false
+//                    }
+//                    target {
+//                        packageName = 'api.covid19.stats'
+////                        directory = 'src/generated/jooq'
+//                        directory = 'build/generated/jooq/java'
+//                    }
+//                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+//                }
+//            }
+//        }
+//    }
+//}

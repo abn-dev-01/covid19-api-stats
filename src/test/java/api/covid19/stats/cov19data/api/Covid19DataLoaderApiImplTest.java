@@ -62,7 +62,7 @@ class Covid19DataLoaderApiImplTest {
 
     @Test
     void testGetStatisticsUrl() {
-        var url = covid19DataLoader.getStatisticsUrl();
+        var url = covid19DataLoader.getStatisticsUrl(country);
         assertNotNull(url);
         assertEquals(BASE_URL + PREMIUM_PATH, url);
     }

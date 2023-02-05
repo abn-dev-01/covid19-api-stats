@@ -1,9 +1,8 @@
 //
-
 buildscript {
     ext {
-        set("jfrogArtifactoryVersion", "4+")
-        set("lombokIdVersion", '6.5.0.3')
+//        set("jfrogArtifactoryVersion", "4+")
+        set("lombokIdVersion", '6.6.1')
         set("shadowIdVersion", '7.1.0')
     }
     repositories {
@@ -12,7 +11,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.jooq:jooq-codegen'
+//        classpath 'org.jooq:jooq-codegen:3.17.7'
         classpath 'com.h2database:h2:2.1.214'
         classpath 'org.jooq:jooq-meta-extensions-liquibase:3.17.7'
     }
@@ -53,13 +52,18 @@ repositories {
     mavenCentral()
 }
 
-//ext {
-//    set("log4j2Version", '2.19.0')
-//}
+sourceSets.main.java.srcDir new File(buildDir, 'generated/sources/jooq/java')
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file('build/generated/sources/jooq/java')
+    }
+}
+
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-actuator')
-    implementation('org.springframework.boot:spring-boot-starter-graphql')
-    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
@@ -67,11 +71,11 @@ dependencies {
     //
     implementation 'org.liquibase:liquibase-core'
     // JOOQ
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
     jooqGenerator 'com.h2database:h2:2.1.214'
-    implementation('org.springframework.boot:spring-boot-starter-jooq')
-    implementation('org.jooq:jooq:3.17.7')
-    implementation('org.jooq:jooq-codegen:3.17.7')
-    implementation('org.jooq:jooq-meta-extensions-liquibase:3.17.7')
+    implementation 'org.jooq:jooq:3.17.7'
+    implementation 'org.jooq:jooq-codegen:3.17.7'
+    implementation 'org.jooq:jooq-meta-extensions-liquibase:3.17.7'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -147,7 +151,7 @@ jooq {
                         fluentSetters = false
                     }
                     target {
-                        packageName = 'nu.studer.sample'
+                        packageName = 'api.covid19.stats'
 //                        directory = 'src/generated/jooq'
                         directory = 'build/generated/jooq/java'
                     }

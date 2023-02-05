@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Country {
+public class CountryDto {
     private static final String NO = "no";
-    public static final Country EMPTY = new Country(NO, NO, NO);
+    public static final CountryDto EMPTY = new CountryDto(NO, NO, NO);
 
     @JsonProperty("country")
     private String countryName;

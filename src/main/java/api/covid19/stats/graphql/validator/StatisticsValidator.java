@@ -27,7 +27,7 @@ public class StatisticsValidator {
 
     public void validateCountries(List<String> countries) {
         if (countries == null || countries.isEmpty()) {
-            throw new InvalidRequestRtException("Validation failed: Invalid Country. " +
+            throw new InvalidRequestRtException("Validation failed: Invalid CountryDto. " +
                                                     "Must be at least one country code in the list. ");
         }
     }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class StatisticsValidatorTest {
+class StatisticsStrategyValidatorTest {
 
     StatisticsValidator statisticsValidator;
 
@@ -50,7 +50,7 @@ class StatisticsValidatorTest {
         // asser
         Assertions.assertThrows(InvalidRequestRtException.class,
                                 () -> statisticsValidator.validateCountries(null),
-                                "Empty Country."
+                                "Empty CountryDto."
         );
     }
 }

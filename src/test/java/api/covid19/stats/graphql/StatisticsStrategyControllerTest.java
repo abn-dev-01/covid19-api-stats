@@ -18,7 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class StatisticsControllerTest {
+class StatisticsStrategyControllerTest {
     @MockBean
     Covid19DataLoaderApiImpl covid19DataLoaderApi;
     @Autowired

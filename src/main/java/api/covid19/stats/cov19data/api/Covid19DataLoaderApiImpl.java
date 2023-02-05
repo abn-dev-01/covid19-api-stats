@@ -1,16 +1,12 @@
 package api.covid19.stats.cov19data.api;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import api.covid19.stats.common.CommonConstant;
 import api.covid19.stats.cov19data.Covid19DataLoader;
-import api.covid19.stats.cov19data.api.dto.StatisticsCountriesAndPeriod;
-import api.covid19.stats.cov19data.api.dto.TotalCountry;
-import api.covid19.stats.cov19data.api.service.ApiResultConverter;
+import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
 import api.covid19.stats.cov19data.exception.Covid19ApiRtException;
-import api.covid19.stats.repository.StaticsRepository;
 import api.covid19.stats.service.RestSSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -32,9 +28,7 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
     private final RestSSL restSSL;
     private final Covid19ApiRequestsServiceImpl covid19ApiRequestsService;
     private final Covid19ApiHttpAuthentication authHeaders;
-    private final ApiResultConverter apiResultConverter;
     private final ObjectMapper objectMapper;
-    private final StaticsRepository statisticsRepository;
 
     @Value("${app.url.src.base_url}")
     private String baseApiUrl;
@@ -43,66 +37,42 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
 
 
     /**
-     * @param countries
-     * @param dateFrom  is valid date
-     * @param dateTo    is valid date
+     * @param country  is country ISO2 code (uk, au, ua...)
+     * @param dateFrom is valid date string
+     * @param dateTo   is valid date string
      *
      * @return
      */
     @Override
-    public StatisticsCountriesAndPeriod loadStatisticsByCountryAndPeriod(
-        List<String> countries,
-        String dateFrom,
-        String dateTo
+    public List<TotalCountryDto> loadStatisticsByCountryAndPeriod(
+        String country,
+        LocalDate dateFrom,
+        LocalDate dateTo
     ) {
         final var msg = "loadStatisticsByCountryAndPeriod()";
         LOG.debug(CommonConstant.START_DEBUG, () -> msg);
 
-        final String url = getStatisticsUrl();
+        final String url = getStatisticsUrl(country);
+        final HttpEntity<HttpHeaders> entityHeaders = getHttpEntity();
 
-        HttpEntity<HttpHeaders> entityHeaders = getHttpEntity();
-        final var ldf = LocalDateTime.parse(dateFrom);
-        final var ldt = LocalDateTime.parse(dateTo);
-
-        // Read COVID19 DATA from Repository
-        prepareAllCountriesStatistics(countries, ldf.toLocalDate(), ldt.toLocalDate());
-
-        LOG.info(" > Starting request to COVID19 API >");
         var apiResult = loadTotalCountry(url, entityHeaders);
-        LOG.info(" > End of request to COVID19 API >");
-
-        StatisticsCountriesAndPeriod response = apiResultConverter.fromTotalCountryRs(apiResult);
 
         LOG.debug(CommonConstant.END_DEBUG, () -> msg);
-        return response;
+        return apiResult;
     }
 
-    protected void prepareAllCountriesStatistics(
-        List<String> countries,
-        LocalDate localDateFrom,
-        LocalDate localDateTo
-    ) {
-        countries.stream()
-                 .forEach(countryCode -> {
-                     // FIXME if we can then will run it in concurrent
-                     statisticsRepository.findMaxMinNewCasesByCountry(countryCode, localDateFrom, localDateTo);
-                 });
-    }
-
-    private TotalCountry loadTotalCountry(String url, HttpEntity<HttpHeaders> entityHeaders) {
-
-        final var type = new ParameterizedTypeReference<List<TotalCountry>>() {
-        };
+    protected List<TotalCountryDto> loadTotalCountry(String url, HttpEntity<HttpHeaders> entityHeaders) {
+        final var type = new ParameterizedTypeReference<List<TotalCountryDto>>() {};
         final var result = restSSL.localRestTemplate()
                                   .exchange(url, HttpMethod.GET, entityHeaders, type);
-        LOG.debug(" get data from API > {}", () -> result);
+//        final var result1 = restSSL.localRestTemplate()
+//                                   .exchange(url, HttpMethod.GET, entityHeaders, String.class);
+//        ResponseEntity<List<TotalCountryDto>> result = null;
+
         if (result.getStatusCode().value() != 200) {
             throw new Covid19ApiRtException("Connection to COVID19 API failed.");
         }
-
-        // update Repository
-//        return resultApi != null ? resultApi : null;
-        return null;
+        return result.getBody();
     }
 
     @Override
@@ -112,8 +82,7 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
     }
 
     @Override
-    public String getStatisticsUrl() {
-        var country = "uk";
+    public String getStatisticsUrl(String country) {
         final var url = baseApiUrl.concat(apiStatisticsPath.formatted(country));
         LOG.debug("API URL > {}", () -> url);
         return url;

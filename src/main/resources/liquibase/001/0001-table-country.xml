@@ -10,7 +10,7 @@
     <changeSet id="2023-02-05-01" author="Andrew Nikin" context="prod,dev">
         <sql>
         <![CDATA[
-            CREATE TABLE countries
+            CREATE TABLE entity_country
             (
                 id           INT         NOT NULL PRIMARY KEY,
                 country_name VARCHAR(50) NOT NULL,
@@ -23,7 +23,7 @@
     <changeSet id="2023-02-05-02" author="Andrew Nikin" context="prod,dev">
         <sql>
         <![CDATA[
-            CREATE TABLE total_countries
+            CREATE TABLE entity_total_country
             (
                 id              INT         NOT NULL PRIMARY KEY,
                 country         VARCHAR(50) NOT NULL,
@@ -40,9 +40,9 @@
                 date_stat       DATE NOT NULL,
                 comment         VARCHAR(128)
             );
-            CREATE INDEX IDX_COUNTRY_CODE ON total_countries(country_code);
-            CREATE INDEX IDX_COUNTRY ON total_countries(country);
-            CREATE INDEX IDX_DATE_STAT ON total_countries(date_stat);
+            CREATE INDEX IDX_COUNTRY_CODE ON entity_total_country(country_code);
+            CREATE INDEX IDX_COUNTRY ON entity_total_country(country);
+            CREATE INDEX IDX_DATE_STAT ON entity_total_country(date_stat);
             ]]>
         </sql>
     </changeSet>

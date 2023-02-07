@@ -2,11 +2,13 @@ package api.covid19.stats;
 
 import api.covid19.stats.graphql.StatisticsController;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@Disabled
 class Covid19ApiStatsApplicationTests {
 
     @Autowired

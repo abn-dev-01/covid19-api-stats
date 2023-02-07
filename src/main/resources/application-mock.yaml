@@ -9,30 +9,12 @@ debug: true
 
 # SPRING OPTIONS
 spring:
-  main:
-    banner-mode: off
-  graphql:
-    graphiql:
-      path: /gql
-      enabled: true
-
   datasource:
-  liquibase:
-    change-log: classpath:/liquibase/changelog.xml
 
 # APP Configurations
 app:
   url:
-    api:
-      v1:
-        statistics: /api/v1/statistics
     # url of resources
     src:
       base_url: BASE_URL
       max_min_statistics: PREMIUM_PATH
-      username: corona
-      auth: ZUav4vawzCfMcMXHV8B
-  ssl:
-    keystore:
-      path: classpath:ssl/keystore.jks
-      auth: changeit

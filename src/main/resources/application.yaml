@@ -17,45 +17,30 @@ spring:
       enabled: true
 
   datasource:
-#    url: jdbc:h2:file:./db.h2
-#    url: jdbc:h2:file:./db.h2;AUTO_SERVER=TRUE
-    url: jdbc:h2:tcp://localhost/D:\FL\t\Covid19-API\db.tcp-v2.0.206
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: sa
-#  liquibase:
-#    enabled: true
-#    change-log: "classpath:liquibase/changelog.xml"
-#    default-schema: public
-#    contexts: dev
-#    user: sa
-#    password: sa
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:55433/dev_covid19
+    driver-class-name: org.postgresql.Driver
+    username: sekretka
+    password: sekretka
 
   # spring:flyway
   flyway:
     enabled: true
-    baseline-on-migrate: true
-    clean-disabled: true
-    default-schema: "PUBLIC_SCHEMA"
-    driver-class-name: org.h2.Driver
-    encoding: UTF-8
-    url: jdbc:h2:tcp://localhost/D:\FL\t\Covid19-API\db.tcp-v2.0.206
-#    url: jdbc:h2:file:./db.h2
-    user: sa
-    password: sa
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:55433/dev_covid19
+    user: sekretka
+    password: sekretka
+    schemas: ['public']
     locations: classpath:db/migration
+    baseline-on-migrate: true
 
 
-# FLYWAY
+## FLYWAY
 flyway:
-  url:
-  schemas: 'public'
-  user: 'sa'
-  password: 'sa'
-
+  url: jdbc:postgresql://localhost:55433/dev_covid19
+  schemas: public
+  user: 'sekretka'
+  password: 'sekretka'
+  locations: 'filesystem:db/migration'
 
 # APP Configurations
 app:

@@ -28,8 +28,8 @@
             <AppenderRef ref="LogToRollingRandomAccessFile"/>
         </Logger>
 
-        <!--// LIQUIBASE //-->
-        <Logger name="org.liquibase" level="debug" additivity="false">
+        <!--// FLYWAY //-->
+        <Logger name=" org.flywaydb" level="debug" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
 

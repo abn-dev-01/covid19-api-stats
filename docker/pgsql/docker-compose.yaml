@@ -1,0 +1,17 @@
+#
+# docker-compose up 
+#
+version: "3.9"
+services:
+  postgres_covid19:
+    container_name: PGSQL_COVID19
+    image: postgres:10.19
+    environment:
+      POSTGRES_DB: "dev_covid19"
+      POSTGRES_USER: "sekretka"
+      POSTGRES_PASSWORD: "sekretka"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - "55433:5432"
+    volumes:
+      - "D:/FL/t/Covid19-API/db/pgsql/bind-data:/var/lib/postgresql/data"

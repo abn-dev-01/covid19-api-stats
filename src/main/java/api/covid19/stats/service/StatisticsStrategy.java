@@ -8,6 +8,7 @@ import api.covid19.stats.cov19data.Covid19DataLoader;
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
 import api.covid19.stats.exceptions.InvalidParameterRtException;
 import api.covid19.stats.repository.StaticsRepository;
+import api.covid19.stats.repository.h2.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class StatisticsStrategy {
     private final Covid19DataLoader covid19DataLoader;
     private final StaticsRepository staticsRepository;
+    private final CountryRepository countryRepository;
 
 
     public void findStatistics(List<String> countries, String dateFrom, String dateTo) {
@@ -27,12 +29,14 @@ public class StatisticsStrategy {
 
         // preparation and validation of the Repository
         countries.stream()
-                 .forEach(country -> {
-                     final var isCountry = staticsRepository.containsCountry(country);
+                 .forEach(countrySlug -> {
+                     final var isCountry = staticsRepository.containsCountry(countrySlug);
                      if (!isCountry) {
-                         final String countryIso2 = staticsRepository;
+//                         final var entityCountryRecord = countryRepository.findCountryBySlug(countrySlug);
+//                         final String countryIso2 = entityCountryRecord.getIso2();
+                         final String countryIso2 = countrySlug;
                          final List<TotalCountryDto> allTotalCountries =
-                             covid19DataLoader.loadStatisticsByCountryAndPeriod(country, ldf, ldt);
+                             covid19DataLoader.loadStatisticsByCountryAndPeriod(countrySlug, ldf, ldt);
 
                          final var validatedCountries =
                              allTotalCountries.stream()
@@ -52,7 +56,7 @@ public class StatisticsStrategy {
                          }
                      }
                      // check dates
-                     final var upToDate = staticsRepository.lastDateByCountry(country, ldt);
+                     final var upToDate = staticsRepository.lastDateByCountry(countrySlug, ldt);
                      if (!upToDate) {
                          // update load
                      }

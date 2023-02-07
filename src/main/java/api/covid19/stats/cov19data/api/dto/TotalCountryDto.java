@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TotalCountryDto {
-    @JsonProperty("CountryDto")
+    @JsonProperty("Country")
     private String country;
     @JsonProperty("CountryCode")
     private String countryCode;

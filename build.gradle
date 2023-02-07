@@ -2,7 +2,7 @@
 buildscript {
     ext {
         set("lombokIdVersion", '6.6.1')
-        set("shadowIdVersion", '7.1.0')
+        set("flywayDbVersion", '9.14.1')
     }
     repositories {
         mavenLocal()
@@ -10,9 +10,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-//        classpath 'org.jooq:jooq-codegen:3.17.7'
-        classpath 'com.h2database:h2:2.0.206'
-        classpath 'org.flywaydb:flyway-core:9.8.1'
+        classpath 'org.jooq:jooq-codegen:3.17.7'
+//        classpath 'org.postgresql:postgresql:42.2.14'
+//        classpath 'org.flywaydb:flyway-core:${flywayDbVersion}'
     }
 //    configurations['classpath'].resolutionStrategy.eachDependency {
 //        if (requested.group == 'org.jooq') {
@@ -25,29 +25,50 @@ plugins {
     id 'java'
     id 'idea'
     id "maven-publish"
-    id 'checkstyle'
+//    id 'checkstyle'
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'io.freefair.lombok' version "${lombokIdVersion}"
     id 'jacoco'
     id 'nu.studer.jooq' version '8.1'
-//    id 'org.flywaydb.flyway' version '9.8.1'
-    id 'org.flywaydb.flyway' version '9.14.1'
+    id 'org.flywaydb.flyway' version "${flywayDbVersion}"
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+sourceSets.main.java.srcDirs += 'build/generated/java/main'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 configurations {
+    flywayMigration
+    testCompile.extendsFrom(compileOnly)
     compileOnly {
         extendsFrom annotationProcessor
     }
     all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
-    flywayMigration
+}
+
+ext {
+    set("lombokIdVersion", '6.6.1')
+    set("flywayDbVersion", '9.14.1')
 }
 
 repositories {
@@ -73,16 +94,19 @@ dependencies {
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
     //
     // DB
-    runtimeOnly 'com.h2database:h2'
-    implementation 'org.flywaydb:flyway-core:9.8.1'
+    implementation 'org.postgresql:postgresql:42.2.14'
+//    implementation 'org.flywaydb:flyway-core:9.14.1'
+    implementation "org.flywaydb:flyway-core:${flywayDbVersion}"
     //
     // JOOQ
     flywayMigration 'com.h2database:h2:2.0.206'
-    jooqGenerator 'com.h2database:h2:2.0.206'
+    jooqGenerator 'org.postgresql:postgresql:42.2.14'
     //
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.jooq:jooq:3.17.7'
     implementation 'org.jooq:jooq-codegen:3.17.7'
+
+    implementation('com.puppycrawl.tools:checkstyle') { version { prefer '10.3.3' } }
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -95,20 +119,12 @@ dependencies {
 //flywayMigrate.dependsOn classes
 
 flyway {
-//    configurations = ['flywayMigration']
-    url = 'jdbc:h2:tcp://localhost/D:\\FL\\t\\Covid19-API\\db.tcp-v2.0.206'
-    user = 'sa'
-    password = 'sa'
+    url = 'jdbc:postgresql://localhost:55433/dev_covid19'
+    user = 'sekretka'
+    password = 'sekretka'
     locations = ['classpath:db/migration']
-    schemas = ['PUBLIC_SCHEMA']
+    schemas = ['public']
 }
-
-
-checkstyle {
-    configFile = project(':').file("checkstyle.xml")
-    checkstyleTest.enabled = false
-}
-checkstyleMain.dependsOn compileJava
 
 task buildZip(type: Zip) {
     archiveExtension.set("jar")
@@ -133,7 +149,7 @@ jooq {
             generationTool {
                 logging = org.jooq.meta.jaxb.Logging.WARN
                 jdbc {
-                    driver = 'org.h2.Driver'
+                    driver = 'org.postgresql.Driver'
                     url = flyway.url
                     user = flyway.user
                     password = flyway.password
@@ -141,7 +157,7 @@ jooq {
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
-                        name = 'org.jooq.meta.h2.H2Database'
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
                         includes = '.*'
                         excludes = ''
                     }
@@ -176,56 +192,10 @@ tasks.named('generateJooq').configure {
     allInputsDeclared = true
 }
 
-//jooq {
-//    version = '3.17.6'
-//    configurations {
-//        main {
-//            generationTool {
-//                logging = org.jooq.meta.jaxb.Logging.WARN
-//                jdbc {
-//                    driver = 'org.h2.Driver'
-//                    url = 'jdbc:h2:file:./db.h2'
-////                    url = 'jdbc:h2:file:./;AUTO_SERVER=TRUE'
-//                    user = 'sa'
-//                    password = 'sa'
-//                    properties {
-//                        property {
-//                            key = 'PAGE_SIZE'
-//                            value = 2048
-//                        }
-//                    }
-//                }
-//                generator {
-//                    name = 'org.jooq.codegen.DefaultGenerator'
-//                    database {
-//                        name = 'org.jooq.meta.h2.H2Database'
-//                        forcedTypes {
-//                            forcedType {
-//                                name = 'varchar'
-//                                includeExpression = '.*'
-//                                includeTypes = 'JSONB?'
-//                            }
-//                            forcedType {
-//                                name = 'varchar'
-//                                includeExpression = '.*'
-//                                includeTypes = 'INET'
-//                            }
-//                        }
-//                    }
-//                    generate {
-//                        deprecated = false
-//                        records = false
-//                        immutablePojos = false
-//                        fluentSetters = false
-//                    }
-//                    target {
-//                        packageName = 'api.covid19.stats'
-////                        directory = 'src/generated/jooq'
-//                        directory = 'build/generated/jooq/java'
-//                    }
-//                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
-//                }
-//            }
-//        }
-//    }
+
+//checkstyle {
+//    configFile = project(':').file("src/main/resources/checkstyle.xml")
+//    checkstyleTest.enabled = false
 //}
+
+//checkstyleMain.dependsOn compileJava

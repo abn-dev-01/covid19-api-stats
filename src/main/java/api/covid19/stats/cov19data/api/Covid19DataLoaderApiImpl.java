@@ -6,6 +6,7 @@ import java.util.List;
 import api.covid19.stats.common.CommonConstant;
 import api.covid19.stats.cov19data.Covid19DataLoader;
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
+import api.covid19.stats.cov19data.exception.Covid19ApiAccessFailed;
 import api.covid19.stats.cov19data.exception.Covid19ApiRtException;
 import api.covid19.stats.service.RestSSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -63,12 +66,13 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
 
     protected List<TotalCountryDto> loadTotalCountry(String url, HttpEntity<HttpHeaders> entityHeaders) {
         final var type = new ParameterizedTypeReference<List<TotalCountryDto>>() {};
-        final var result = restSSL.localRestTemplate()
-                                  .exchange(url, HttpMethod.GET, entityHeaders, type);
-//        final var result1 = restSSL.localRestTemplate()
-//                                   .exchange(url, HttpMethod.GET, entityHeaders, String.class);
-//        ResponseEntity<List<TotalCountryDto>> result = null;
-
+        final ResponseEntity<List<TotalCountryDto>> result;
+        try {
+            result = restSSL.localRestTemplate()
+                            .exchange(url, HttpMethod.GET, entityHeaders, type);
+        } catch (RestClientException e) {
+            throw new Covid19ApiAccessFailed("Covid19 API failed. " + e.getMessage());
+        }
         if (result.getStatusCode().value() != 200) {
             throw new Covid19ApiRtException("Connection to COVID19 API failed.");
         }

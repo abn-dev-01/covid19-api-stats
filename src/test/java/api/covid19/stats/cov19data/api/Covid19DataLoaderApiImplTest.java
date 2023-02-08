@@ -46,7 +46,7 @@ class Covid19DataLoaderApiImplTest {
 
         Mockito.when(restSSL.localRestTemplate()).thenReturn(restTemplateMock);
 
-        var result = covid19DataLoader.loadStatisticsByCountryAndPeriod(cc, ff, tt);
+        var result = covid19DataLoader.loadRawCovid19DataByCountryAndPeriod(cc, ff, tt);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -72,7 +72,7 @@ class Covid19DataLoaderApiImplTest {
 
     @Test
     @Disabled
-    public void shouldProfiledProperty_overridePropertyValues() {
+    void shouldProfiledProperty_overridePropertyValues() {
         String baseUrl = ((Covid19DataLoaderApiImpl) covid19DataLoader).getBaseApiUrl();
         String path = ((Covid19DataLoaderApiImpl) covid19DataLoader).getApiStatisticsPath();
 

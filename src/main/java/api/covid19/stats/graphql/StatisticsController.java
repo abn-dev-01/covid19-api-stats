@@ -4,7 +4,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import api.covid19.stats.graphql.dto.StatisticsRs;
+import api.covid19.stats.graphql.converter.GraphQLConverter;
+import api.covid19.stats.graphql.dto.AttributeKeyValuePair;
 import api.covid19.stats.graphql.validator.StatisticsValidator;
 import api.covid19.stats.service.StatisticsStrategy;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,11 @@ import org.springframework.stereotype.Controller;
 public class StatisticsController {
 
     private final StatisticsValidator statisticsValidator;
-    //    private final Covid19DataLoader covid19DataLoader;
     private final StatisticsStrategy statisticsStrategy;
 
 
     @QueryMapping
-    public StatisticsRs statisticsByCountryAndPeriod(
+    public List<AttributeKeyValuePair> statisticsByCountryAndPeriod(
         @Argument @Valid @NotNull List<String> countries,
         @Argument @Valid @NotNull String dateFrom,
         @Argument @Valid @NotNull String dateTo
@@ -33,11 +33,8 @@ public class StatisticsController {
         statisticsValidator.validateDate(dateTo);
         statisticsValidator.validateCountries(countries);
 
-//        final var statisticsGQL = covid19DataLoader.loadStatisticsByCountryAndPeriod(countries, dateFrom, dateTo);
-        statisticsStrategy.findStatistics(countries, dateFrom, dateTo);
+        final var result = statisticsStrategy.findStatistics(countries, dateFrom, dateTo);
 
-//        final var statistics = GraphQLConverter.statisticsFromGQL(statisticsGQL);
-
-        return null;
+        return GraphQLConverter.gqlResponse(result);
     }
 }

@@ -19,7 +19,7 @@ public class StatisticsValidator {
             throw new InvalidRequestRtException("Validation failed: Date is empty.");
         }
         try {
-            var date = LocalDateTime.parse(dateString);
+            LocalDateTime.parse(dateString);
         } catch (Exception e) {
             throw new InvalidRequestRtException("Validation failed: Invalid date-time. " + e.getMessage());
         }

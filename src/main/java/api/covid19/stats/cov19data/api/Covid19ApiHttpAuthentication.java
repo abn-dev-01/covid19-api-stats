@@ -1,6 +1,6 @@
 package api.covid19.stats.cov19data.api;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,20 +19,12 @@ public class Covid19ApiHttpAuthentication {
     @Value("${app.url.src.auth}")
     private String atuh;
 
-//    TODO DELME
-//    @Value("${app.url.src.x-access-token}")
-//    private String xAccessToken;
-
-
     public HttpHeaders getHeaders() {
 
         final var headers = new HttpHeaders();
 
-// FIXME
-//        headers.add("X-Access-Token", xAccessToken);
-
         String auth = username + ":" + atuh;
-        byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
+        byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.US_ASCII));
         String authHeader = "Basic " + new String(encodedAuth);
         headers.add("Authorization", authHeader);
 

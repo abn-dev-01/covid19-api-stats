@@ -1,10 +1,9 @@
-package api.covid19.stats.repository.h2;
+package api.covid19.stats.repository.db;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import api.covid19.stats.common.CommonConstant;
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
@@ -15,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.Result;
 import org.springframework.stereotype.Service;
 import static api.covid19.stats.public_.tables.EntityTotalCountry.ENTITY_TOTAL_COUNTRY;
 
 @Log4j2
 @RequiredArgsConstructor
 @Service
-public class StaticsRepositoryH2 implements StaticsRepository {
+public class StaticsRepositoryDb implements StaticsRepository {
     public static final String DATE_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ssXXX";
     private final DSLContext jooq;
 
@@ -39,15 +39,26 @@ public class StaticsRepositoryH2 implements StaticsRepository {
                 } catch (Exception e) {
                     LOG.error("Invalid format of Date record. >" + tc.getDate());
                 }
-                return new EntityTotalCountryRecord(
-                    null, tc.getCountry(), countryCode, tc.getProvince(), tc.getCity(), tc.getCityCode(),
-                    tc.getLat(), tc.getLon(), tc.getConfirmed(), tc.getDeaths(), tc.getRecovered(), tc.getActive(),
-                    date, tc.getComment());
+                final var r = new EntityTotalCountryRecord();
+                r.setCountry(tc.getCountry());
+                r.setCountryCode(countryCode);
+                r.setProvince(tc.getProvince());
+                r.setCity(tc.getCity());
+                r.setCityCode(tc.getCityCode());
+                r.setLat(tc.getLat());
+                r.setLon(tc.getLon());
+                r.setConfirmed(tc.getConfirmed());
+                r.setDeaths(tc.getDeaths());
+                r.setRecovered(tc.getRecovered());
+                r.setActive(tc.getActive());
+                r.setDateStat(date);
+                r.setComment(tc.getComment());
+                return r;
             })
             .filter(ff -> StringUtils.isNotBlank(ff.get(ENTITY_TOTAL_COUNTRY.COUNTRY_CODE)))
-            .collect(Collectors.toList());
+            .toList();
 
-        if (totalCountriesRecords.size() == 0) {
+        if (totalCountriesRecords.isEmpty()) {
             return;
         }
         final var inserted = jooq.batchInsert(totalCountriesRecords)
@@ -60,14 +71,14 @@ public class StaticsRepositoryH2 implements StaticsRepository {
         final var msg = "findMaxMinNewCasesByCountry()";
         LOG.debug(CommonConstant.START_DEBUG, () -> msg);
 
-        final var totalCountryByCountryIso2 = jooq
+        final var totalCountryByCountryCode = jooq
             .selectFrom(Tables.ENTITY_TOTAL_COUNTRY)
             .where(ENTITY_TOTAL_COUNTRY.COUNTRY_CODE.equalIgnoreCase(countryCode))
             .limit(1)
             .fetch();
 
         LOG.debug(CommonConstant.END_DEBUG, () -> msg);
-        return totalCountryByCountryIso2.size() == 1;
+        return totalCountryByCountryCode.size() == 1;
     }
 
     /**
@@ -111,8 +122,24 @@ public class StaticsRepositoryH2 implements StaticsRepository {
         return totalCountryByCountryIso2.get(ENTITY_TOTAL_COUNTRY.DATE_STAT);
     }
 
+    /**
+     * Reads data from the Repository.
+     *
+     * @param country is a slug country name.
+     * @param ldf     dateFrom as {@link java.time.LocalDate}
+     * @param ldt     dateTO as {@link java.time.LocalDate}
+     *
+     * @return
+     */
     @Override
-    public Object findByCountry(String country, LocalDate dateFrom, LocalDate dateTo) {
-        return false;
+    public Result<EntityTotalCountryRecord> getMaxMinStatisticsByCountry(String country, LocalDate ldf, LocalDate ldt) {
+        return jooq
+            .selectFrom(ENTITY_TOTAL_COUNTRY)
+            .where(ENTITY_TOTAL_COUNTRY.DATE_STAT.ge(ldf)
+                                                 .and(ENTITY_TOTAL_COUNTRY.DATE_STAT.le(ldt))
+                                                 .and(ENTITY_TOTAL_COUNTRY.COUNTRY_CODE.equalIgnoreCase(country))
+            )
+            .orderBy(ENTITY_TOTAL_COUNTRY.DATE_STAT.asc())
+            .fetch();
     }
 }

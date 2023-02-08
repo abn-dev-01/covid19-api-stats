@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
+import api.covid19.stats.public_.tables.records.EntityTotalCountryRecord;
+import org.jooq.Result;
 
 /**
  * Our Repository with our statistics (Redis, SQL, NoSQL, etc)
@@ -18,5 +20,5 @@ public interface StaticsRepository {
 
     LocalDate getLastDateByCountry(String countryCode, LocalDate lastDate);
 
-    Object findByCountry(String country, LocalDate dateFrom, LocalDate dateTo);
+    Result<EntityTotalCountryRecord> getMaxMinStatisticsByCountry(String country, LocalDate ldf, LocalDate ldt);
 }

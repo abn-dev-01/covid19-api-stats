@@ -99,7 +99,7 @@ dependencies {
     implementation "org.flywaydb:flyway-core:${flywayDbVersion}"
     //
     // JOOQ
-    flywayMigration 'com.h2database:h2:2.0.206'
+    flywayMigration 'com.h2database:db:2.0.206'
     jooqGenerator 'org.postgresql:postgresql:42.2.14'
     //
     implementation 'org.springframework.boot:spring-boot-starter-jooq'

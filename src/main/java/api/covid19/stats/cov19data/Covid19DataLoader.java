@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 
 public interface Covid19DataLoader {
 
-    List<TotalCountryDto> loadStatisticsByCountryAndPeriod(
+    List<TotalCountryDto> loadRawCovid19DataByCountryAndPeriod(
         String country,
         LocalDate dateFrom,
         LocalDate dateTo

@@ -32,8 +32,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 public class CustomHttpComponentsClientHttpRequestFactory extends HttpComponentsClientHttpRequestFactory {
 
-//protected static class CustomHttpComponentsClientHttpRequestFactory extends HttpComponentsClientHttpRequestFactory {
-
     private final String cookieSpec;
 
     private final boolean enableRedirects;
@@ -58,7 +56,6 @@ public class CustomHttpComponentsClientHttpRequestFactory extends HttpComponents
         }
     }
 
-    //    private HttpClient createHttpClient(Duration readTimeout, boolean ssl) {
     private HttpClient createHttpClient(Duration readTimeout, boolean ssl) {
         try {
             HttpClientBuilder builder = HttpClients.custom();
@@ -94,8 +91,6 @@ public class CustomHttpComponentsClientHttpRequestFactory extends HttpComponents
     }
 
     @Override
-//    protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
-//    protected HttpClientContext createHttpContext(HttpMethod httpMethod, URI uri) {
     protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
         HttpClientContext context = HttpClientContext.create();
         context.setRequestConfig(createRequestConfig());

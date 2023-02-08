@@ -1,4 +1,4 @@
-package api.covid19.stats.repository.h2;
+package api.covid19.stats.repository.db;
 
 import api.covid19.stats.exceptions.CountryNotFound;
 import api.covid19.stats.public_.Tables;

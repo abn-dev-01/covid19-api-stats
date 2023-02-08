@@ -47,7 +47,7 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
      * @return
      */
     @Override
-    public List<TotalCountryDto> loadStatisticsByCountryAndPeriod(
+    public List<TotalCountryDto> loadRawCovid19DataByCountryAndPeriod(
         String country,
         LocalDate dateFrom,
         LocalDate dateTo
@@ -81,8 +81,7 @@ public class Covid19DataLoaderApiImpl implements Covid19DataLoader {
 
     @Override
     public HttpEntity<HttpHeaders> getHttpEntity() {
-        var entityHeaders = new HttpEntity<HttpHeaders>(authHeaders.getHeaders());
-        return entityHeaders;
+        return new HttpEntity<>(authHeaders.getHeaders());
     }
 
     @Override

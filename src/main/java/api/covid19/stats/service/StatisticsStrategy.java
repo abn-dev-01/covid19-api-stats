@@ -8,15 +8,15 @@ import api.covid19.stats.cov19data.Covid19DataLoader;
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
 import api.covid19.stats.exceptions.InvalidParameterRtException;
 import api.covid19.stats.exceptions.InvalidRequestRtException;
+import api.covid19.stats.jooq.public_.tables.records.EntityTotalCountryRecord;
 import api.covid19.stats.model.StatisticsMaxMinByCountry;
 import api.covid19.stats.model.type.CountStatisticsByPeriod;
-import api.covid19.stats.public_.tables.records.EntityTotalCountryRecord;
 import api.covid19.stats.repository.StaticsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.Result;
 import org.springframework.stereotype.Service;
-import static api.covid19.stats.public_.Tables.ENTITY_TOTAL_COUNTRY;
+import static api.covid19.stats.jooq.public_.Tables.ENTITY_TOTAL_COUNTRY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Log4j2

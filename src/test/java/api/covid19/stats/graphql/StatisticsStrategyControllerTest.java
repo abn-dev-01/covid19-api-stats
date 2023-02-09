@@ -7,21 +7,26 @@ import java.util.List;
 import api.covid19.stats.cov19data.api.Covid19DataLoaderApiImpl;
 import api.covid19.stats.cov19data.api.dto.StatisticsCountriesAndPeriod;
 import api.covid19.stats.graphql.validator.StatisticsValidator;
+import api.covid19.stats.model.StatisticsMaxMinByCountry;
+import api.covid19.stats.service.StatisticsStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Disabled
+@ExtendWith(MockitoExtension.class)
 class StatisticsStrategyControllerTest {
     @MockBean
     Covid19DataLoaderApiImpl covid19DataLoaderApi;
+    @MockBean
+    StatisticsStrategy statisticsStrategy;
     @Autowired
     StatisticsValidator statisticsValidator;
     @Autowired
@@ -33,7 +38,6 @@ class StatisticsStrategyControllerTest {
 
 
     @Test
-    @Disabled
     @DisplayName("Test controller StatisticsByCountryAndPeriod - Max & Min cases.")
     void statisticsByCountryAndPeriod() {
 
@@ -41,32 +45,13 @@ class StatisticsStrategyControllerTest {
         String dateFrom = "2022-12-12T11:22:33";
         String dateTo = "2022-12-22T11:22:33";
 
-        // mocked response
-        final int maxCases = 100;
-        final int minCases = 2;
-        StatisticsCountriesAndPeriod statGQL = new StatisticsCountriesAndPeriod(
-            maxCases, Arrays.asList(new LocalDate[]{LocalDate.of(2022, 1, 1)}),
-            minCases, Arrays.asList(
-            new LocalDate[]{
-                LocalDate.of(2022, 1, 1),
-                LocalDate.of(2022, 2, 1),
-                LocalDate.of(2022, 3, 1)
-            })
-        );
+        StatisticsMaxMinByCountry statResult = new StatisticsMaxMinByCountry();
 
-//        Mockito.when(covid19DataLoaderApi.loadStatisticsByCountryAndPeriod(countries, dateFrom, dateTo))
-//               .thenReturn(statGQL);
+        Mockito.when(statisticsStrategy.findStatistics(countries, dateFrom, dateTo))
+               .thenReturn(statResult);
 
         var response = statisticsController.statisticsByCountryAndPeriod(countries, dateFrom, dateTo);
 
         Assertions.assertNotNull(response);
-
-//        assertEquals(response.getMaxCases(), maxCases, "Max cases");
-//        Assertions.assertNotNull(response.getMaxCasesDate());
-//        assertEquals(response.getMaxCasesDate().size(), 1, "Max cases date count");
-//
-//        assertEquals(response.getMinCases(), minCases, "Min cases");
-//        Assertions.assertNotNull(response.getMinCasesDate());
-//        assertEquals(response.getMinCasesDate().size(), 3, "Min cases date count");
     }
 }

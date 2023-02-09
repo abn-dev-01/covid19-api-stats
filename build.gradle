@@ -162,7 +162,7 @@ jooq {
                         excludes = ''
                     }
                     target {
-                        packageName = 'api.covid19.stats'
+                        packageName = 'api.covid19.stats.jooq'
                         directory = 'build/generated/sources/jooq/java'
                     }
                 }
@@ -191,6 +191,19 @@ tasks.named('generateJooq').configure {
     // make jOOQ task participate in incremental builds (and build caching)
     allInputsDeclared = true
 }
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "api/covid19/stats/jooq/**"
+            ])
+        }))
+    }
+}
+
 
 
 //checkstyle {

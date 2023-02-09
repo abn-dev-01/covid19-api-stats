@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
-import api.covid19.stats.public_.tables.records.EntityTotalCountryRecord;
+import api.covid19.stats.jooq.public_.tables.records.EntityTotalCountryRecord;
 import org.jooq.Result;
 
 /**

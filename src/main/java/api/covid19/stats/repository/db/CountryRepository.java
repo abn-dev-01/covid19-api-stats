@@ -1,9 +1,9 @@
 package api.covid19.stats.repository.db;
 
 import api.covid19.stats.exceptions.CountryNotFound;
-import api.covid19.stats.public_.Tables;
-import api.covid19.stats.public_.tables.EntityCountry;
-import api.covid19.stats.public_.tables.records.EntityCountryRecord;
+import api.covid19.stats.jooq.public_.Tables;
+import api.covid19.stats.jooq.public_.tables.EntityCountry;
+import api.covid19.stats.jooq.public_.tables.records.EntityCountryRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.DSLContext;

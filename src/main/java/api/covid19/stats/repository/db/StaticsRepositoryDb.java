@@ -7,8 +7,8 @@ import java.util.List;
 
 import api.covid19.stats.common.CommonConstant;
 import api.covid19.stats.cov19data.api.dto.TotalCountryDto;
-import api.covid19.stats.public_.Tables;
-import api.covid19.stats.public_.tables.records.EntityTotalCountryRecord;
+import api.covid19.stats.jooq.public_.Tables;
+import api.covid19.stats.jooq.public_.tables.records.EntityTotalCountryRecord;
 import api.covid19.stats.repository.StaticsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.springframework.stereotype.Service;
-import static api.covid19.stats.public_.tables.EntityTotalCountry.ENTITY_TOTAL_COUNTRY;
+import static api.covid19.stats.jooq.public_.tables.EntityTotalCountry.ENTITY_TOTAL_COUNTRY;
 
 @Log4j2
 @RequiredArgsConstructor

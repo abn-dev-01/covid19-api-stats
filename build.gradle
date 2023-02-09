@@ -11,14 +11,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.jooq:jooq-codegen:3.17.7'
-//        classpath 'org.postgresql:postgresql:42.2.14'
-//        classpath 'org.flywaydb:flyway-core:${flywayDbVersion}'
     }
-//    configurations['classpath'].resolutionStrategy.eachDependency {
-//        if (requested.group == 'org.jooq') {
-//            useVersion '3.17.6'
-//        }
-//    }
 }
 
 plugins {
@@ -83,7 +76,6 @@ idea {
     }
 }
 
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
@@ -135,6 +127,14 @@ task buildZip(type: Zip) {
     }
 }
 build.dependsOn buildZip
+
+// Executable Options
+tasks.named("bootJar") {
+    mainClass = 'api.covid19.stats.Covid19ApiStatsApplication'
+}
+tasks.named("bootRun") {
+    mainClass = 'api.covid19.stats.Covid19ApiStatsApplication'
+}
 
 tasks.named('test') {
     useJUnitPlatform()
